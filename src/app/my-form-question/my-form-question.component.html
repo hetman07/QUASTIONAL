@@ -1,0 +1,184 @@
+<mat-toolbar color="primary">
+  <span class="fill-remaining-space">QUASTIONAL</span>
+</mat-toolbar>
+
+<div class="container" *ngIf="!post; else forminfo" novalidate>
+  <form
+    [formGroup]="questionForm"
+    (ngSubmit)="onSubmit(questionForm.value)"
+    class="form"
+  >
+    <p>
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="FirstName"
+          formControlName="firstName"
+          required
+        />
+        <mat-error
+          *ngIf="
+            !questionForm.controls['firstName'].valid &&
+            questionForm.controls['firstName'].touched
+          "
+        >
+          {{ titleAlert }}
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="LastName"
+          formControlName="lastName"
+          required
+        />
+        <mat-error
+          *ngIf="
+            !questionForm.controls['lastName'].valid &&
+            questionForm.controls['lastName'].touched
+          "
+        >
+          {{ titleAlert }}
+        </mat-error>
+      </mat-form-field>
+    </p>
+
+    <div class="block">
+      <mat-form-field>
+        <input
+          matInput
+          [matDatepicker]="dp"
+          placeholder="Date of Birthday"
+          datePickerFormat="DD/MM/YYYY"
+          formControlName="dateOfBirth"
+          required
+        />
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <p>
+      <mat-form-field>
+        <mat-select
+          name="framework"
+          placeholder="Select framework"
+          (selectionChange)="frameworkChangeAction((framework = $event.value))"
+          formControlName="framework"
+          required
+        >
+          <mat-option
+            *ngFor="let framework of frameworkList"
+            [value]="framework.frameworkName"
+            >{{ framework.frameworkName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-select
+          placeholder="Select version framework"
+          formControlName="frameworkVersion"
+          required
+        >
+          <mat-option
+            *ngFor="let frameworkVersion of frameworkVersionList"
+            [value]="frameworkVersion"
+            >{{ frameworkVersion }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field class="form-element">
+        <input
+          matInput
+          placeholder="Emailaddress"
+          formControlName="email"
+          required
+        />
+        <mat-error
+          *ngIf="
+            !questionForm.controls['email'].valid &&
+            questionForm.controls['email'].touched
+          "
+        >
+          {{ getErrorEmail() }}
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <!-- hobbies block -->
+    <div formArrayName="hobby" class="example-container">
+      <h4>Hobby</h4>
+      <div
+        class="form-group"
+        *ngFor="
+          let hobbyControl of questionForm.controls.hobby.controls;
+          let i = index
+        "
+      >
+        <div [formGroupName]="i">
+          <mat-form-field>
+            <input
+              matInput
+              placeholder="Enter name hobby"
+              type="text"
+              formControlName="name"
+              required
+            />
+            <mat-error *ngIf="hobbyControl.controls.name.invalid">
+              Name hobby is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input
+              matInput
+              placeholder="Enter duration hobby"
+              type="text"
+              formControlName="duration"
+              required
+            />
+            <mat-error *ngIf="hobbyControl.controls.duration.invalid">
+              Duration hobby is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <button
+          type="button"
+          mat-mini-fab
+          color="warn"
+          fxFlex="nogrow"
+          *ngIf="questionForm.controls.hobby.controls.length > 1"
+          (click)="removeHobby(i)"
+        >
+          <mat-icon>delete forever</mat-icon>
+        </button>
+      </div>
+      <button mat-mini-fab color="primary" type="button" (click)="onAddHobby()">
+        <mat-icon>add box</mat-icon>
+      </button>
+    </div>
+    <br />
+    <div class="form-element">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        class="button"
+        [disabled]="!questionForm.valid"
+      >
+        Submit Form
+      </button>
+    </div>
+  </form>
+</div>
+
+<ng-template #forminfo>
+  <div class="container">
+    {{ post | json }}
+  </div>
+</ng-template>
